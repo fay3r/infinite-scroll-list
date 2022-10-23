@@ -5,7 +5,7 @@ import {
   RawGithubEventType,
 } from '../@types/GithubEventType';
 
-export const getGithubEvents = async ({
+const getGithubEvents = async ({
   itemsPerPage,
   page,
 }: {
@@ -19,16 +19,12 @@ export const getGithubEvents = async ({
       Accept: 'application/vnd.github+json',
     },
   });
-  const mappedEventArray: AppGithubEventType[] = [];
-  if (data) {
-    data.forEach(item => {
-      mappedEventArray.push({
-        id: item.id,
-        login: item.actor.display_login,
-        repoName: item.repo.name,
-        avatarUrl: item.actor.avatar_url,
-      });
-    });
-  }
-  return mappedEventArray;
+  return data.map(item => ({
+    id: item.id,
+    login: item.actor.display_login,
+    repoName: item.repo.name,
+    avatarUrl: item.actor.avatar_url,
+  }));
 };
+
+export default {getGithubEvents};

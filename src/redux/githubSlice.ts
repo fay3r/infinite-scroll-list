@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {AppGithubEventType} from '../@types/GithubEventType';
-import {getGithubEvents} from '../services/GithubService';
+import GithubService from '../services/GithubService';
 import {RootState} from './store';
 import {ToastAndroid} from 'react-native';
 import {ITEMS_PER_PAGE} from '../utils/config';
@@ -36,7 +36,10 @@ export const fetchEvents = createAsyncThunk<
   'github/getEvents',
   (_, API) => {
     const {nextPage} = API.getState().github;
-    return getGithubEvents({itemsPerPage: ITEMS_PER_PAGE, page: nextPage});
+    return GithubService.getGithubEvents({
+      itemsPerPage: ITEMS_PER_PAGE,
+      page: nextPage,
+    });
   },
   {
     condition: (_, {getState}) => {

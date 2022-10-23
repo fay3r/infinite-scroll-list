@@ -1,7 +1,7 @@
 import * as React from 'react';
 import InfiniteScrollList from '../components/InfiniteScrollList';
 import {useEffect} from 'react';
-import {GithubEventItem} from '../components/RepositoryItem';
+import {GithubEventItem} from '../components/GithubEventItem';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {ApiStatus, fetchEvents, selectGithub} from '../redux/githubSlice';
@@ -20,7 +20,10 @@ export const RepositoryList = () => {
   return (
     <View style={styles.container}>
       {initialLoading ? (
-        <ActivityIndicator style={styles.indicator} />
+        <ActivityIndicator
+          style={styles.indicator}
+          testID={'activityIndicator'}
+        />
       ) : (
         <InfiniteScrollList
           data={githubEvents}

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {useMemo, useState} from 'react';
 
-interface Props<T> {
+export interface InfiniteScrollListProps<T> {
   data: T[];
   keyExtractor: (item: T) => string;
   renderItem: (item: ListRenderItemInfo<T>) => React.ReactNode;
@@ -32,7 +32,7 @@ const InfiniteScrollList = <T extends unknown>({
   data,
   enableSearch = false,
   error,
-}: Props<T>) => {
+}: InfiniteScrollListProps<T>) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const isFiltering = useMemo(
