@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AUTH_TOKEN} from '../utils/constants';
+import {AUTH_TOKEN} from '../utils/config';
 import {
   AppGithubEventType,
   RawGithubEventType,

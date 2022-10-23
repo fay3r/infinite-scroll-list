@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {useMemo, useState} from 'react';
@@ -63,21 +64,30 @@ const InfiniteScrollList = <T extends unknown>({
       );
     } else if (error) {
       return (
-        <Text style={[styles.footerContainer, styles.footerText]}>
-          {'Error with loading new items.\n Try again'}
-        </Text>
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerText}>{error}</Text>
+          <TouchableOpacity style={styles.footerText} onPress={onEndReached}>
+            <Text style={styles.tryAgainText}>Try again</Text>
+          </TouchableOpacity>
+        </View>
       );
     } else {
       return <ActivityIndicator style={styles.footerContainer} />;
     }
-  }, [isEndReached, error]);
+  }, [isEndReached, error, onEndReached]);
 
   const EmptyList = (
     <View style={styles.empty}>
       <Text style={styles.title}>:(</Text>
-      <Text>No results found</Text>
+      <Text>No items to show</Text>
+      {data.length > 0 ? null : (
+        <TouchableOpacity onPress={onEndReached}>
+          <Text style={styles.tryAgainText}>Try again</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
+
   return (
     <>
       {enableSearch ? (
@@ -85,12 +95,14 @@ const InfiniteScrollList = <T extends unknown>({
       ) : null}
       <FlatList
         data={filteredList}
-        ListFooterComponent={isFiltering ? null : Footer}
+        ListFooterComponent={isFiltering || data.length === 0 ? null : Footer}
         ListEmptyComponent={EmptyList}
         // @ts-ignore
         renderItem={renderItem}
-        onEndReached={isFiltering ? null : onEndReached}
-        onEndReachedThreshold={0.2}
+        onEndReached={
+          isFiltering || isEndReached || error ? null : onEndReached
+        }
+        onEndReachedThreshold={0.1}
         keyExtractor={keyExtractor}
         style={styles.list}
         ItemSeparatorComponent={ItemSeparator}
@@ -117,6 +129,9 @@ const styles = StyleSheet.create({
   },
   footerContainer: {marginVertical: 15},
   footerText: {width: '100%', textAlign: 'center'},
+  tryAgainText: {
+    color: 'blue',
+  },
 });
 
 export default InfiniteScrollList;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {AppGithubEventType} from '../@types/GithubEventType';
 
 type Props = {
@@ -7,13 +7,13 @@ type Props = {
 };
 export const GithubEventItem = ({itemData}: Props) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <View style={styles.container} key={itemData.id}>
       <Image source={{uri: itemData.avatarUrl}} style={styles.avatar} />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{itemData.login}</Text>
         <Text style={styles.description}>{itemData.repoName}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

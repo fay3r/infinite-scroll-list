@@ -1,43 +1,34 @@
 import * as React from 'react';
 import InfiniteScrollList from '../components/InfiniteScrollList';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {GithubEventItem} from '../components/RepositoryItem';
-import {ActivityIndicator, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {fetchEvents, selectGithub} from '../redux/githubSlice';
+import {ApiStatus, fetchEvents, selectGithub} from '../redux/githubSlice';
 import {useAppDispatch} from '../redux/store';
 
 export const RepositoryList = () => {
-  const [initialLoading, setInitialLoading] = useState(true);
   const dispatch = useAppDispatch();
-  const {isEndReached, githubEvents, error} = useSelector(selectGithub);
+  const {isEndReached, githubEvents, error, status, initialLoading} =
+    useSelector(selectGithub);
 
   useEffect(() => {
-    // @ts-ignore
-    dispatch(fetchEvents())
-      .unwrap()
-      .then(() => {
-        setInitialLoading(false);
-      })
-      .catch(() => {
-        setInitialLoading(false);
-      });
+    dispatch(fetchEvents());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <View style={{flex: 1}}>
-      <Text>{githubEvents.length}</Text>
+    <View style={styles.container}>
       {initialLoading ? (
-        <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} />
+        <ActivityIndicator style={styles.indicator} />
       ) : (
         <InfiniteScrollList
           data={githubEvents}
           keyExtractor={item => item.id}
           renderItem={({item}) => <GithubEventItem itemData={item} />}
-          // @ts-ignore
           onEndReached={() => dispatch(fetchEvents())}
           isEndReached={isEndReached}
+          isLoading={status === ApiStatus.LOADING}
           error={error}
           enableSearch
         />
@@ -45,3 +36,8 @@ export const RepositoryList = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {flex: 1},
+  indicator: {flex: 1, alignSelf: 'center'},
+});
