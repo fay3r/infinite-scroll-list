@@ -1,45 +1,47 @@
 import * as React from 'react';
 import InfiniteScrollList from '../components/InfiniteScrollList';
-import {useRef, useState} from 'react';
-import {GithubEventType} from '../@types/GithubEventType';
-import {mockData} from '../MOCK_DATA';
+import {useEffect, useState} from 'react';
 import {GithubEventItem} from '../components/RepositoryItem';
-import {View} from 'react-native';
+import {ActivityIndicator, Text, View} from 'react-native';
+import {useSelector} from 'react-redux';
+import {fetchEvents, selectGithub} from '../redux/githubSlice';
+import {useAppDispatch} from '../redux/store';
 
 export const RepositoryList = () => {
-  const [data, setData] = useState<GithubEventType[]>(mockData.slice(0, 20));
-  const [isEndReached, setIsEndReached] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const {isEndReached, githubEvents, error} = useSelector(selectGithub);
 
-  const lastIndex = useRef(20);
-
-  const loadMore = async () => {
-    if (!isLoading || !isEndReached) {
-      console.log('about to load more');
-      setIsLoading(true);
-      setTimeout(() => {
-        if (lastIndex.current === data.length) {
-          lastIndex.current += 20;
-          setData(mockData.slice(0, lastIndex.current));
-        } else {
-          setIsEndReached(true);
-        }
-        setIsLoading(false);
-      }, 5000);
-    }
-  };
+  useEffect(() => {
+    // @ts-ignore
+    dispatch(fetchEvents())
+      .unwrap()
+      .then(() => {
+        setInitialLoading(false);
+      })
+      .catch(() => {
+        setInitialLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View style={{flex: 1}}>
-      <InfiniteScrollList
-        data={data}
-        keyExtractor={item => item.title}
-        renderItem={({item}) => <GithubEventItem itemData={item} />}
-        onEndReached={loadMore}
-        isEndReached={isEndReached}
-        isLoading={isLoading}
-        enableSearch
-      />
+      <Text>{githubEvents.length}</Text>
+      {initialLoading ? (
+        <ActivityIndicator style={{flex: 1, alignSelf: 'center'}} />
+      ) : (
+        <InfiniteScrollList
+          data={githubEvents}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => <GithubEventItem itemData={item} />}
+          // @ts-ignore
+          onEndReached={() => dispatch(fetchEvents())}
+          isEndReached={isEndReached}
+          error={error}
+          enableSearch
+        />
+      )}
     </View>
   );
 };

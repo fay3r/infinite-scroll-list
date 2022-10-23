@@ -2,13 +2,17 @@ import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 
 import {RepositoryList} from './src/parts/RepositoryList';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 
 const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
-      <RepositoryList />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
+        <RepositoryList />
+      </SafeAreaView>
+    </Provider>
   );
 };
 

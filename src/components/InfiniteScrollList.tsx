@@ -18,6 +18,7 @@ interface Props<T> {
   isEndReached: boolean;
   isLoading?: boolean;
   enableSearch?: boolean;
+  error: string | null;
 }
 
 const ItemSeparator = () => <View style={styles.separator} />;
@@ -28,8 +29,8 @@ const InfiniteScrollList = <T extends unknown>({
   onEndReached,
   keyExtractor,
   data,
-  isLoading,
   enableSearch = false,
+  error,
 }: Props<T>) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -60,12 +61,16 @@ const InfiniteScrollList = <T extends unknown>({
           No more data to load
         </Text>
       );
-    } else if (isLoading) {
-      return <ActivityIndicator style={styles.footerContainer} />;
+    } else if (error) {
+      return (
+        <Text style={[styles.footerContainer, styles.footerText]}>
+          {'Error with loading new items.\n Try again'}
+        </Text>
+      );
     } else {
-      return null;
+      return <ActivityIndicator style={styles.footerContainer} />;
     }
-  }, [isEndReached, isLoading]);
+  }, [isEndReached, error]);
 
   const EmptyList = (
     <View style={styles.empty}>
@@ -85,7 +90,7 @@ const InfiniteScrollList = <T extends unknown>({
         // @ts-ignore
         renderItem={renderItem}
         onEndReached={isFiltering ? null : onEndReached}
-        onEndReachedThreshold={0.4}
+        onEndReachedThreshold={0.2}
         keyExtractor={keyExtractor}
         style={styles.list}
         ItemSeparatorComponent={ItemSeparator}

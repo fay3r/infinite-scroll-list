@@ -1,17 +1,17 @@
 import * as React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {GithubEventType} from '../@types/GithubEventType';
+import {AppGithubEventType} from '../@types/GithubEventType';
 
 type Props = {
-  itemData: GithubEventType;
+  itemData: AppGithubEventType;
 };
 export const GithubEventItem = ({itemData}: Props) => {
   return (
     <TouchableOpacity style={styles.container}>
       <Image source={{uri: itemData.avatarUrl}} style={styles.avatar} />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{itemData.title}</Text>
-        <Text style={styles.description}>{itemData.description}</Text>
+        <Text style={styles.title}>{itemData.login}</Text>
+        <Text style={styles.description}>{itemData.repoName}</Text>
       </View>
     </TouchableOpacity>
   );

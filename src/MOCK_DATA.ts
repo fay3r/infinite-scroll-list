@@ -1,4 +1,4 @@
-import {GithubEventType} from './@types/GithubEventType';
+import {GithubEventType} from './@types/AppGithubEventType';
 
 export const mockData: GithubEventType[] = [
   {
